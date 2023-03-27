@@ -27,18 +27,37 @@
     in
     {
 
-      packages = forAllSystems (system:
-        let pkgs = nixpkgsFor.${system};
-        in rec {
-          nix_sample = pkgs.buildGoModule {
-            pname = "nix_sample";
-            inherit version;
-            src = ./.;
-            vendorSha256 =
-              "sha256-PEn81rz846WwG+zaWyJ7aRCh4tF4ifaF7rbMfy3PMB0=";
-          };
-          default = nix_sample;
-        });
+      packages = forAllSystems
+        (system:
+          let
+            pkgs = nixpkgsFor.${system};
+          in rec {
+            nix_sample = pkgs.buildGoModule {
+              pname = "nix_sample";
+              inherit version;
+              src = ./.;
+              vendorSha256 =
+                "sha256-PEn81rz846WwG+zaWyJ7aRCh4tF4ifaF7rbMfy3PMB0=";
+            };
+            default = nix_sample;
+
+            docker = pkgs.dockerTools.buildLayeredImage
+              {
+                name = "nix_sample";
+                tag = "v${version}";
+                config = {
+                  Entrypoint = [ "${self.packages.x86_64-linux.nix_sample}/bin/nix_sample" ];
+                };
+              };
+
+          });
+
+
+
+
+
+
+
 
       apps = forAllSystems (system: rec {
         nix_sample = {
@@ -62,5 +81,7 @@
         });
 
       devShell = forAllSystems (system: self.devShells.${system}.default);
+
+
     };
 }
