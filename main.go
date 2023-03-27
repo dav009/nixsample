@@ -1,7 +1,13 @@
 package main
 
-import "github.com/fatih/color"
+import (
+	"fmt"
+
+	"github.com/fatih/color"
+)
 
 func main() {
-	color.Cyan("Yay! Hello world in blue")
+	someVar := "othervar"
+	color.Cyan(fmt.Sprintf("Yay! Hello world in blue, %s", someVar))
+
 }
