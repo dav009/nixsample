@@ -27,31 +27,27 @@
     in
     {
 
-      # Provide some binary packages for selected system types.
       packages = forAllSystems (system:
         let pkgs = nixpkgsFor.${system};
         in rec {
-          go-sample = pkgs.buildGoModule {
-            pname = "go-sample";
+          nix_sample = pkgs.buildGoModule {
+            pname = "nix_sample";
             inherit version;
             src = ./.;
             vendorSha256 =
-              "sha256-pQpattmS9VmO3ZIQUFn66az8GSmB4IvYhTTCFn6SUmo=";
+              "sha256-PEn81rz846WwG+zaWyJ7aRCh4tF4ifaF7rbMfy3PMB0=";
           };
-          default = go-sample;
+          default = nix_sample;
         });
 
       apps = forAllSystems (system: rec {
-        go-sample = {
+        nix_sample = {
           type = "app";
-          program = "${self.packages.${system}.go-hello}/bin/go-sample";
+          program = "${self.packages.${system}.nix_sample}/bin/nix_sample";
         };
-        default = go-sample;
+        default = nix_sample;
       });
 
-      # The default package for 'nix build'. This makes sense if the
-      # flake provides only one package or there is a clear "main"
-      # package.
       defaultPackage = forAllSystems (system: self.packages.${system}.default);
 
       defaultApp = forAllSystems (system: self.apps.${system}.default);
@@ -60,7 +56,8 @@
         let pkgs = nixpkgsFor.${system};
         in {
           default = pkgs.mkShell {
-            buildInputs = with pkgs; [ go gopls goimports go-tools ];
+            buildInputs = with pkgs; [ go_1_20 gopls gotools  ];
+            GOROOT = "${pkgs.go}/share/go";
           };
         });
 
