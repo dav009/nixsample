@@ -1,6 +1,6 @@
 on: [push]
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -8,3 +8,5 @@ jobs:
         uses: cachix/install-nix-action@v17
       - name: Run tests
         run: nix develop --command go test some_test.go
+      - name: Build TODOs Docker image
+        run: nix build .#docker
