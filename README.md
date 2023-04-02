@@ -15,3 +15,7 @@ builders = ssh-ng://builder@localhost aarch64-linux /etc/nix/builder_ed25519 4 -
 ```
 
 - change `aarch64-linux` for the architecture you need
+
+----
+
+- Build docker file: `nix build .#docker`
